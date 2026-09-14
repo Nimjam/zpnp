@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zamonien PnP — Heldenbogen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-base: #0c0b0a;
+      --bg-panel: rgba(26, 23, 20, 0.92);
+      --bg-card: rgba(38, 33, 28, 0.75);
+      --bg-input: #151311;
+      --border: #4d3d2c;
+      --border-focus: #c59b4c;
+      --gold: #d4af37;
+      --gold-light: #f3e5ab;
+      --gold-dark: #8c6d23;
+      --blood: #8b0000;
+      --blood-glow: #e74c3c;
+      --text: #e8dec8;
+      --text-dim: #9c8e7d;
+      --font-title: 'Cinzel', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 50% 20%, #211912 0%, var(--bg-base) 85%);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      padding-bottom: 3rem;
+      background-attachment: fixed;
+    }
+
+    header {
+      text-align: center;
+      padding: 1.8rem 1rem 1.2rem;
+      background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+      border-bottom: 1px solid var(--border);
+    }
+
+    header::after {
+      content: "♦ ❖ ♦";
+      display: block;
+      color: var(--gold);
+      font-size: 0.85rem;
+      letter-spacing: 0.5rem;
+      margin-top: 0.4rem;
+    }
+
+    header h1 {
+      font-family: var(--font-title);
+      font-size: 2.3rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      color: var(--gold-light);
+      text-shadow: 0 0 20px rgba(212, 175, 55, 0.35);
+      text-transform: uppercase;
+    }
+
+    .top-toolbar {
+      max-width: 1200px;
+      margin: 1rem auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 1rem;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .hero-meta-badge {
+      font-family: var(--font-title);
+      font-size: 1.05rem;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .mini-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--gold);
+      object-fit: cover;
+      background: #14100c;
+    }
+
+    .btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+    nav {
+      max-width: 1200px;
+      margin: 0 auto 1.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0 1rem;
+      flex-wrap: wrap;
+    }
+
+    nav button {
+      font-family: var(--font-title);
+      background: var(--bg-panel);
+      color: var(--text-dim);
+      border: 1px solid var(--border);
+      padding: 0.65rem 1.15rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      transition: all 0.25s;
+    }
+
+    nav button:hover {
+      color: var(--gold-light);
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    nav button.active {
+      background: linear-gradient(180deg, #3d301f 0%, #201911 100%);
+      color: var(--gold-light);
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.25);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.4rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem; }
+
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.3rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      position: relative;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+    }
+
+    .card h2 {
+      font-family: var(--font-title);
+      color: var(--gold);
+      font-size: 1.15rem;
+      letter-spacing: 1px;
+      margin-bottom: 1.1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid rgba(77, 61, 44, 0.4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.6rem 0.75rem;
+      border-radius: 4px;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      margin-bottom: 0.8rem;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    textarea { resize: vertical; min-height: 85px; }
+
+    .btn {
+      font-family: var(--font-title);
+      background: linear-gradient(180deg, #2f271e 0%, #1c1813 100%);
+      color: var(--gold-light);
+      border: 1px solid var(--border);
+      padding: 0.55rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      border-color: var(--gold);
+      background: linear-gradient(180deg, #423629 0%, #2b241c 100%);
+    }
+
+    .btn-xs {
+      padding: 0.2rem 0.55rem;
+      font-size: 0.72rem;
+      border-radius: 3px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-gold {
+      background: linear-gradient(180deg, #a67c1e 0%, #6e4e0d 100%);
+      color: #fff;
+      border-color: var(--gold);
+    }
+
+    .btn-gold:hover {
+      background: linear-gradient(180deg, #bd8e26 0%, #876013 100%);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+    }
+
+    .btn-danger {
+      background: linear-gradient(180deg, #4d1414 0%, #2b0b0b 100%);
+      border-color: #6d2020;
+      color: #ffb3b3;
+    }
+
+    .btn-danger:hover { background: var(--blood); color: #fff; }
+
+    /* PORTRÄT */
+    .portrait-section {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      margin-bottom: 1.2rem;
+      background: rgba(0,0,0,0.3);
+      padding: 0.7rem 0.9rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .portrait-frame {
+      width: 80px;
+      height: 80px;
+      min-width: 80px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+      background: #14100c;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .portrait-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .portrait-placeholder {
+      font-size: 2.2rem;
+      color: var(--text-dim);
+      user-select: none;
+    }
+
+    /* LP BAR */
+    .lp-tracker {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .lp-bar-container {
+      background: #200808;
+      height: 18px;
+      border-radius: 9px;
+      border: 1px solid #4a1515;
+      overflow: hidden;
+      margin: 0.6rem 0;
+    }
+
+    .lp-bar-fill {
+      background: linear-gradient(90deg, #800c0c 0%, #c0392b 70%, #e74c3c 100%);
+      height: 100%;
+      width: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .stat-display-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(105px, 1fr));
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .stat-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.8rem 0.5rem;
+      text-align: center;
+    }
+
+    .stat-pill .num {
+      font-family: var(--font-title);
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1.1;
+    }
+
+    .stat-pill .lbl {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 0.3rem;
+    }
+
+    .pill-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      border: 1px solid var(--border);
+      background: #2a2219;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .badge-rast { border-color: #5c3a7d; color: #d8b4f8; background: #261538; }
+    .badge-kampf { border-color: #8c531b; color: #ffca85; background: #331e08; }
+    .badge-passiv { border-color: #2b5e40; color: #a3e9be; background: #0f2b1b; }
+    .badge-stat { border-color: var(--gold-dark); color: var(--gold-light); background: #241d13; font-weight: bold; }
+
+    .skill-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .skill-row input[type="text"] {
+      margin: 0;
+      flex: 2;
+      padding: 0.35rem 0.5rem;
+    }
+
+    .skill-row input[type="number"] {
+      margin: 0;
+      flex: 1;
+      padding: 0.35rem 0.5rem;
+      text-align: center;
+    }
+
+    .skill-total {
+      flex: 1;
+      text-align: center;
+      font-weight: bold;
+      color: var(--gold);
+      font-size: 0.95rem;
+    }
+
+    .talent-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .talent-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .talent-title {
+      font-family: var(--font-title);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gold-light);
+    }
+
+    .slot-bubble-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+    }
+
+    .slot-bubble {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: #14100c;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .slot-bubble.filled {
+      background: var(--gold);
+      color: #000;
+      border-color: var(--gold-light);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.6);
+    }
+
+    .counter-btn-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.6rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+    }
+
+    .counter-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      background: #2a241e;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: bold;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .counter-btn:hover { background: var(--gold); color: #000; }
+
+    /* BÜCHER CHRONIK STYLES */
+    .book-tabs-nav {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.6rem;
+    }
+
+    .book-tab-btn {
+      background: #1a1612;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 0.45rem 0.9rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: var(--font-title);
+      transition: all 0.2s;
+    }
+
+    .book-tab-btn:hover {
+      color: var(--gold-light);
+      border-color: var(--gold-dark);
+    }
+
+    .book-tab-btn.active {
+      background: linear-gradient(180deg, #3d301f 0%, #201911 100%);
+      color: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.active { display: flex; }
+
+    .modal-window {
+      background: var(--bg-panel);
+      border: 1px solid var(--gold);
+      box-shadow: 0 0 30px rgba(0,0,0,0.9);
+      border-radius: 8px;
+      width: 100%;
+      max-width: 550px;
+      padding: 1.5rem;
+    }
+
+    .modal-window h3 {
+      font-family: var(--font-title);
+      color: var(--gold);
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* SILHOUETTE & RUCKSACK */
+    .silhouette-grid {
+      display: grid;
+      grid-template-columns: 1fr 140px 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .silhouette-center {
+      text-align: center;
+      font-size: 5rem;
+      opacity: 0.25;
+      user-select: none;
+    }
+
+    .backpack-frame {
+      border: 2px solid #543f2b;
+      background: #1a1510;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    .money-pouch {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      background: #14100c;
+      border: 1px solid #3d2f21;
+      border-radius: 6px;
+      padding: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+
+    .coin-slot { text-align: center; }
+    .c-copper { color: #d37339; }
+    .c-silver { color: #d0d7de; }
+    .c-gold { color: #ffd700; }
+
+    @media (max-width: 768px) {
+      .silhouette-grid { grid-template-columns: 1fr; }
+      .silhouette-center { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Zamonien</h1>
+    <p>Heldenverwaltung & PnP-Begleiter (HowToBeAHero Regelwerk)</p>
+  </header>
+
+  <!-- OBERE LEISTE (IM SPIELMODUS) -->
+  <div id="playToolbar" class="top-toolbar" style="display: none;">
+    <div class="hero-meta-badge">
+      <img id="toolbarAvatar" class="mini-avatar" src="" style="display:none;" alt="Avatar">
+      <span id="toolbarFallbackIcon">⚔️</span>
+      <span id="quickHeroDisplay">Held</span>
+      <span class="pill-badge" id="quickClassDisplay" style="color:var(--gold); border-color:var(--gold-dark);">Krieger (Stufe 1)</span>
+      <span class="pill-badge badge-rast" id="tpCounterDisplay">Freie TP: 0</span>
+      <span class="pill-badge" id="skillPointsDisplay" style="color:#74b9ff; border-color:#0984e3;">Freie Fähigkeitspunkte: 0</span>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-gold" onclick="levelUpHero()">⭐ Stufenaufstieg (Meilenstein)</button>
+      <button class="btn" onclick="toggleEditMode()">✏️ Basisdaten</button>
+      <button class="btn" onclick="exportJSON()">📥 Speichern</button>
+      <button class="btn" onclick="document.getElementById('importFile').click()">📤 Laden</button>
+      <input type="file" id="importFile" style="display:none" onchange="importJSON(event)">
+      <button class="btn btn-danger" onclick="resetAll()">Neustart</button>
+    </div>
+  </div>
+
+  <!-- NAVIGATION (IM SPIELMODUS) -->
+  <nav id="mainNav" style="display: none;">
+    <button class="active" onclick="showTab('mainOverviewTab', this)">🏠 Hauptseite & Vitalwerte</button>
+    <button onclick="showTab('actionsTab', this)">⚡ Aktionen & Kampf</button>
+    <button onclick="showTab('skillsTab', this)">📊 Fähigkeiten & Grundwerte</button>
+    <button onclick="showTab('talentsTab', this)">✨ Talente verwalten</button>
+    <button onclick="showTab('equipTab', this)">🛡️ Ausrüstung</button>
+    <button onclick="showTab('invTab', this)">🎒 Rucksack & Münzen</button>
+    <button onclick="showTab('campaignNotesTab', this)">📖 Bücher & Chronik</button>
+    <button onclick="showTab('notesTab', this)">📜 Charakterprofil & RP</button>
+  </nav>
+
+  <div class="container">
+
+    <!-- ==================== SCHRITT 1: CHARAKTERERSTELLUNG ==================== -->
+    <div id="creationScreen" class="card" style="max-width: 680px; margin: 2rem auto;">
+      <h2>Erschaffe deinen Helden</h2>
+      <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 1.2rem;">
+        Wähle deinen Namen, dein Porträt, dein Volk und deine Klassenrolle. Deine 400 Start-Fähigkeitspunkte und deine Start-Talentslots kannst du direkt im Anschluss anlegen.
+      </p>
+
+      <div class="portrait-section">
+        <div class="portrait-frame">
+          <img id="createAvatarPreview" class="portrait-img" alt="Vorschau">
+          <span id="createAvatarPlaceholder" class="portrait-placeholder">👤</span>
+        </div>
+        <div>
+          <label>Charakter-Porträt</label>
+          <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+            <button class="btn btn-xs" onclick="document.getElementById('avatarUploadInput').click()">🖼️ Bild wählen</button>
+            <button class="btn btn-danger btn-xs" onclick="removeAvatar()">✕ Entfernen</button>
+          </div>
+          <input type="file" id="avatarUploadInput" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
+        </div>
+      </div>
+
+      <label>Name des Helden</label>
+      <input type="text" id="createName" placeholder="z. B. Darion Mondklinge">
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label>Volk</label>
+          <input type="text" id="createRace" placeholder="z. B. Sylvaner, Nereide, Unhaimer...">
+        </div>
+        <div>
+          <label>Eigene Klassenbezeichnung / Titel (Immersion)</label>
+          <input type="text" id="createCustomClass" placeholder="z. B. Paladin, Druide, Klingenmeister...">
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div>
+          <label>Klassenkategorie (Mechanik & Bonus)</label>
+          <select id="createCategory" onchange="updateCreationSubclasses()">
+            <option value="nahkampf">Nahkampf (+1 Schadenswürfel bei Kampf-Talenten)</option>
+            <option value="geist">Geist (+1 Schadens-/Heilungswürfel bei Rast-Slots)</option>
+            <option value="praktiker">Praktiker (+5 Probe / +1 Rüstung bei Buffs/Debuffs)</option>
+          </select>
+        </div>
+        <div>
+          <label>Klassenrolle (Regelboni)</label>
+          <select id="createSubClass">
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-gold" style="width: 100%; padding: 0.9rem; margin-top: 1rem; font-size: 1rem;" onclick="finishCreation()">
+        ⚔️ Charakter erstellen & Bogen öffnen
+      </button>
+    </div>
+
+    <!-- ==================== FREIGESCHALTETE SPIEL-BEREICHE ==================== -->
+    <div id="gameplaySection" style="display: none;">
+
+      <!-- TAB 1: HAUPTSEITE & VITALWERTE -->
+      <div id="mainOverviewTab" class="tab-content active">
+        <div class="portrait-section" style="margin-bottom:1.4rem;">
+          <div class="portrait-frame">
+            <img id="mainAvatarDisplay" class="portrait-img" alt="Held">
+            <span id="mainAvatarPlaceholder" class="portrait-placeholder">👤</span>
+          </div>
+          <div>
+            <h3 id="mainHeroHeaderName" style="color:var(--gold-light); font-family:var(--font-title); font-size:1.25rem;">Darion Mondklinge</h3>
+            <p id="mainHeroHeaderSub" style="color:var(--text-dim); font-size:0.85rem; margin-bottom:0.3rem;">Paladin — Sylvaner (Krieger, Stufe 1)</p>
+            <div style="display:flex; gap:0.35rem;">
+              <button class="btn btn-xs" onclick="document.getElementById('avatarUploadInput').click()">🖼️ Ändern</button>
+              <button class="btn btn-danger btn-xs" onclick="removeAvatar()">✕ Löschen</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <h2>Vitalwerte & Rast</h2>
+            <div class="lp-tracker">
+              <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.95rem;">
+                <span style="color:var(--blood-glow);">Lebenspunkte (LP)</span>
+                <span><span id="lpCurrentDisplay">100</span> / <span id="lpMaxDisplay">100</span></span>
+              </div>
+              <div class="lp-bar-container">
+                <div id="lpBarFill" class="lp-bar-fill"></div>
+              </div>
+              <div style="display:flex; gap:0.5rem; margin-top:0.6rem;">
+                <input type="number" id="currentLP" value="100" style="margin:0; font-size:1.1rem; font-weight:bold; text-align:center;" oninput="updateCalculations()">
+                <button class="btn" onclick="modifyLP(5)">+5</button>
+                <button class="btn" onclick="modifyLP(-5)">-5</button>
+              </div>
+            </div>
+
+            <label>Schaden / Heilung auf Helden anwenden</label>
+            <div style="display:flex; gap:0.5rem;">
+              <input type="number" id="lpModInput" placeholder="Wert eintragen" style="margin:0;">
+              <button class="btn btn-danger" onclick="applyDamage()">Schaden nehmen</button>
+              <button class="btn" onclick="applyHeal()">Heilen</button>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-top:0.4rem;">
+              * Rüstungsschutz (<strong id="quickArmorNote">0</strong>) wird bei Treffern automatisch abgezogen (Mindestschaden: 1).
+            </p>
+
+            <label style="margin-top:1.2rem;">Rast durchführen</label>
+            <div style="display:flex; gap:0.6rem; align-items:stretch;">
+              <button id="shortRestBtn" class="btn" style="flex:1;" onclick="restShort()">
+                ☕ Kurze Rast <span id="shortRestCounter" style="font-size:0.8rem; color:var(--gold-light); margin-left:0.3rem;">(2/2)</span>
+              </button>
+              <button class="btn btn-gold" style="flex:1;" onclick="restLong()">⛺ Lange Rast</button>
+            </div>
+            <p style="font-size:0.75rem; color:var(--text-dim); margin-top:0.4rem;">
+              * Kurze Rast füllt 15 + (5 × Level) LP auf (max. 2x vor einer Langen Rast). Lange Rast heilt voll und füllt alle kurzen Rasten & großen Slots auf.
+            </p>
+          </div>
+
+          <div class="card">
+            <h2>Tisch-Zielwerte & Geistesblitze</h2>
+            <div class="stat-display-grid">
+              <div class="stat-pill">
+                <div class="num" id="combatRateDisplay">65%</div>
+                <div class="lbl">Kampfwert (W100)</div>
+              </div>
+              <div class="stat-pill">
+                <div class="num" id="armorDisplay">0</div>
+                <div class="lbl">Feste Rüstung</div>
+              </div>
+              <div class="stat-pill">
+                <div class="num" id="gbpDisplay">0</div>
+                <div class="lbl">Geistesblitze (GBP)</div>
+              </div>
+            </div>
+
+            <div style="background:var(--bg-card); border:1px solid var(--border); border-radius:6px; padding:0.8rem; margin-bottom:1rem;">
+              <label>Verbleibende GBP verwalten (1 GBP pro 10 Punkte im Grundwert):</label>
+              <div style="display:flex; align-items:center; gap:0.6rem;">
+                <input type="number" id="currentGBP" value="0" min="0" style="margin:0; text-align:center; font-weight:bold; width:90px;" onchange="saveData()">
+                <button class="btn" onclick="modifyGBP(-1)">-1 Ausgeben</button>
+                <button class="btn" onclick="modifyGBP(1)">+1</button>
+                <button class="btn" onclick="resetGBP()">Voll auffüllen</button>
+              </div>
+            </div>
+
+            <div style="background:rgba(0,0,0,0.35); border:1px solid var(--border); border-radius:6px; padding:0.8rem; font-size:0.82rem; color:var(--text-dim); line-height:1.5;">
+              <strong style="color:var(--gold-light);">Tischregeln:</strong><br>
+              • <strong>Angriff:</strong> Wurf kleiner oder gleich Kampfwert trifft.<br>
+              • <strong>01 oder 02:</strong> Kritischer Treffer (Doppelter Schaden).<br>
+              • <strong>96 bis 100:</strong> Automatischer Fehlschlag / Patzer.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: AKTIONEN & KAMPF (GROSSE & KLEINE SLOTS) -->
+      <div id="actionsTab" class="tab-content">
+        <div class="card" style="margin-bottom:1.4rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.5rem;">
+            <h2>🌙 Große Slots (Rast-Talente & Heilungen)</h2>
+            <span class="pill-badge badge-rast">Auffüllung nur bei Langer Rast</span>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">
+            Besonders mächtige Zauber, Schläge oder Heilungen. Klicke auf die Slot-Kreise, um verbrauchte Einsätze abzustreichen.
+          </p>
+          <div id="actionsRastTalentsList"></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; margin-bottom:1rem;">
+            <h2>⚔️ Kleine Slots (Kampf-Talente)</h2>
+            <button class="btn btn-gold" onclick="resetCombatTalents()">🔄 Neuer Kampf (Kampf-Talente erneuern)</button>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">
+            Taktische Fähigkeiten (1x bzw. 2x+ pro Kampfbegegnung). Klicke nach jedem Gefecht auf "Neuer Kampf", um sie wieder freizugeben. Große Rast-Slots bleiben davon unberührt.
+          </p>
+          <div id="actionsCombatTalentsList"></div>
+        </div>
+      </div>
+
+      <!-- TAB 3: FÄHIGKEITEN & BASEN (How to be a Hero) -->
+      <div id="skillsTab" class="tab-content">
+        <div class="card" style="margin-bottom: 1.2rem;">
+          <h2>HowToBeAHero Fähigkeiten-Verwaltung</h2>
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+            <p style="font-size:0.9rem; color:var(--text-dim);">
+              Investierte Punkte: <strong id="spentPointsDisplay" style="color:var(--gold);">0</strong> / <span id="totalPointsAllowedDisplay">400</span> Punkte
+            </p>
+            <span class="pill-badge" style="background:#1b2838; color:#74b9ff; border-color:#0984e3;">Grundwert = (Punkte / 10) + Klassenrollenbonus</span>
+          </div>
+          <p id="classBonusNote" style="font-size:0.8rem; color:var(--gold-light); margin-top:0.6rem;"></p>
+        </div>
+
+        <div class="grid-3">
+          <!-- HANDELN -->
+          <div class="card">
+            <h2>
+              <span>Handeln</span>
+              <span class="pill-badge" id="baseHandelnBadge">Grundwert: 0%</span>
+            </h2>
+            <div style="display:flex; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-bottom:0.4rem; padding:0 0.4rem;">
+              <span style="flex:2;">Fähigkeit</span>
+              <span style="flex:1; text-align:center;">Punkte</span>
+              <span style="flex:1; text-align:center;">Zielwert</span>
+              <span style="width:24px;"></span>
+            </div>
+            <div id="skillsList_handeln"></div>
+            <button class="btn" style="width:100%; margin-top:0.5rem;" onclick="addSkillRow('handeln')">+ Fähigkeit hinzufügen</button>
+          </div>
+
+          <!-- WISSEN -->
+          <div class="card">
+            <h2>
+              <span>Wissen</span>
+              <span class="pill-badge" id="baseWissenBadge">Grundwert: 0%</span>
+            </h2>
+            <div style="display:flex; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-bottom:0.4rem; padding:0 0.4rem;">
+              <span style="flex:2;">Fähigkeit</span>
+              <span style="flex:1; text-align:center;">Punkte</span>
+              <span style="flex:1; text-align:center;">Zielwert</span>
+              <span style="width:24px;"></span>
+            </div>
+            <div id="skillsList_wissen"></div>
+            <button class="btn" style="width:100%; margin-top:0.5rem;" onclick="addSkillRow('wissen')">+ Fähigkeit hinzufügen</button>
+          </div>
+
+          <!-- SOZIALES -->
+          <div class="card">
+            <h2>
+              <span>Soziales</span>
+              <span class="pill-badge" id="baseSozialesBadge">Grundwert: 0%</span>
+            </h2>
+            <div style="display:flex; font-size:0.75rem; color:var(--text-dim); font-weight:bold; margin-bottom:0.4rem; padding:0 0.4rem;">
+              <span style="flex:2;">Fähigkeit</span>
+              <span style="flex:1; text-align:center;">Punkte</span>
+              <span style="flex:1; text-align:center;">Zielwert</span>
+              <span style="width:24px;"></span>
+            </div>
+            <div id="skillsList_soziales"></div>
+            <button class="btn" style="width:100%; margin-top:0.5rem;" onclick="addSkillRow('soziales')">+ Fähigkeit hinzufügen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: TALENTE VERWALTEN -->
+      <div id="talentsTab" class="tab-content">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h2>Erlernte Talente & Aufwertungen</h2>
+            <button class="btn btn-gold" onclick="openTalentModal()">+ Neues Talent erlernen</button>
+          </div>
+          
+          <div id="talentCapInfo" style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem; padding:0.8rem; background:rgba(0,0,0,0.4); border-radius:4px; line-height:1.6;"></div>
+          <div id="talentsList"></div>
+        </div>
+      </div>
+
+      <!-- TAB 5: AUSRÜSTUNG (Ausrüstung.pdf) -->
+      <div id="equipTab" class="tab-content">
+        <div class="card" style="margin-bottom:1.5rem;">
+          <h2>Rüstungsschutz</h2>
+          <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+            <label style="margin:0;">Rüstungswert der Rüstungsteile (Basis):</label>
+            <input type="number" id="manualArmorBonus" value="0" style="width:100px; margin:0; font-weight:bold; color:var(--gold);" oninput="updateCalculations()">
+            <span id="armorBreakdownLabel" style="font-size:0.85rem; color:var(--text-dim);">(Fester Schadensabzug pro Treffer)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Körperausstattung (Slots)</h2>
+          <div class="silhouette-grid">
+            <div>
+              <label>Kopf</label>
+              <input type="text" id="eq_kopf" placeholder="Helm, Kapuze..." onchange="saveData()">
+
+              <label>Gesicht</label>
+              <input type="text" id="eq_gesicht" placeholder="Maske, Brille..." onchange="saveData()">
+
+              <label>Hals</label>
+              <input type="text" id="eq_hals" placeholder="Amulett, Talisman..." onchange="saveData()">
+
+              <label>Schultern</label>
+              <input type="text" id="eq_schultern" placeholder="Schulterpanzer..." onchange="saveData()">
+
+              <label>Hemd / Wams</label>
+              <input type="text" id="eq_hemd" placeholder="Kettenhemd, Gambeson..." onchange="saveData()">
+
+              <label>Brust / Körper</label>
+              <input type="text" id="eq_koerper" placeholder="Plattenharnisch, Lederkürass..." onchange="saveData()">
+            </div>
+
+            <div class="silhouette-center">
+              🛡️<br>👤<br>⚔️
+            </div>
+
+            <div>
+              <label>Armschienen</label>
+              <input type="text" id="eq_arme" placeholder="Schienen, Wickel..." onchange="saveData()">
+
+              <label>Hände</label>
+              <input type="text" id="eq_haende" placeholder="Handschuhe, Panzerfaust..." onchange="saveData()">
+
+              <label>Hüfte / Gürtel</label>
+              <input type="text" id="eq_huefte" placeholder="Waffengürtel, Taschen..." onchange="saveData()">
+
+              <label>Füße / Stiefel</label>
+              <input type="text" id="eq_fuesse" placeholder="Stiefel, Sporen..." onchange="saveData()">
+
+              <label>Ringe</label>
+              <input type="text" id="eq_ringe1" placeholder="Ring 1" onchange="saveData()">
+              <input type="text" id="eq_ringe2" placeholder="Ring 2" onchange="saveData()">
+            </div>
+          </div>
+
+          <h2 style="margin-top:2rem;">Bewaffnung</h2>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem;">
+            <div>
+              <label>Haupthand</label>
+              <input type="text" id="eq_haupthand" placeholder="z. B. Breitschwert (2W10)" onchange="saveData()">
+            </div>
+            <div>
+              <label>Nebenhand</label>
+              <input type="text" id="eq_nebenhand" placeholder="z. B. Rundschild (+2 Rüstung)" onchange="saveData()">
+            </div>
+            <div>
+              <label>Mythic / Relikt</label>
+              <input type="text" id="eq_mythic" placeholder="Artefakt, Foliant..." onchange="saveData()">
+            </div>
+          </div>
+
+          <h2 style="margin-top:1.5rem;">Misc-Fächer (Schnellzugriff)</h2>
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap:0.5rem;">
+            <input type="text" id="eq_misc1" placeholder="Slot 1" onchange="saveData()">
+            <input type="text" id="eq_misc2" placeholder="Slot 2" onchange="saveData()">
+            <input type="text" id="eq_misc3" placeholder="Slot 3" onchange="saveData()">
+            <input type="text" id="eq_misc4" placeholder="Slot 4" onchange="saveData()">
+            <input type="text" id="eq_misc5" placeholder="Slot 5" onchange="saveData()">
+            <input type="text" id="eq_misc6" placeholder="Slot 6" onchange="saveData()">
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 6: RUCKSACK & MÜNZEN (Inventar.pdf) -->
+      <div id="invTab" class="tab-content">
+        <div class="card backpack-frame">
+          <h2>Geldbeutel</h2>
+          <div class="money-pouch">
+            <div class="coin-slot">
+              <label class="c-copper">🪙 Kupfer</label>
+              <input type="number" id="coinKupfer" value="0" min="0" oninput="saveData()">
+            </div>
+            <div class="coin-slot">
+              <label class="c-silver">🥈 Silber</label>
+              <input type="number" id="coinSilber" value="1" min="0" oninput="saveData()">
+            </div>
+            <div class="coin-slot">
+              <label class="c-gold">👑 Gold</label>
+              <input type="number" id="coinGold" value="0" min="0" oninput="saveData()">
+            </div>
+          </div>
+
+          <h2>Rucksack-Fächer</h2>
+          <label>Deckelfächer (Oben auf der Klappe)</label>
+          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:0.6rem; margin-bottom:1rem;">
+            <textarea id="inv_deckel_l" placeholder="Links..." onchange="saveData()"></textarea>
+            <textarea id="inv_deckel_m" placeholder="Mitte..." onchange="saveData()"></textarea>
+            <textarea id="inv_deckel_r" placeholder="Rechts..." onchange="saveData()"></textarea>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 2fr 1fr; gap:0.8rem;">
+            <div>
+              <label>Seitentasche Links</label>
+              <textarea id="inv_tasche_l" style="min-height:200px;" placeholder="Seile, Fackeln..." onchange="saveData()"></textarea>
+            </div>
+            <div>
+              <label>Großes Hauptfach</label>
+              <textarea id="inv_hauptfach" style="min-height:200px;" placeholder="Lagerpaket, Rationen, Schlafsack..." onchange="saveData()"></textarea>
+            </div>
+            <div>
+              <label>Seitentasche Rechts</label>
+              <textarea id="inv_tasche_r" style="min-height:200px;" placeholder="Karten, Kräuter..." onchange="saveData()"></textarea>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 2fr 1fr; gap:0.8rem; margin-top:0.8rem;">
+            <div>
+              <label>Bodenfach (Unten)</label>
+              <textarea id="inv_boden" placeholder="Ersatzkleidung, Zeltplane..." onchange="saveData()"></textarea>
+            </div>
+            <div>
+              <label>Trankflasche / Phiole</label>
+              <textarea id="inv_phiole" placeholder="Heiltrank, Elixier..." onchange="saveData()"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: BÜCHER & KAMPAGNEN-CHRONIK -->
+      <div id="campaignNotesTab" class="tab-content">
+        <div class="card">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; margin-bottom:1rem;">
+            <h2>📖 Chronik-Bibliothek (Bücher & Kapitel)</h2>
+            <button class="btn btn-gold" onclick="addNewBook()">+ Neues Buch / Kapitel anlegen</button>
+          </div>
+          <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:1rem;">
+            Lege dir hier Bücher für einzelne Spielsessions, NSC-Register oder besondere Lore-Notizen an.
+          </p>
+          
+          <div id="bookTabsList" class="book-tabs-nav"></div>
+
+          <div id="activeBookContainer">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.6rem; flex-wrap:wrap; gap:0.5rem;">
+              <h3 id="activeBookTitle" style="color:var(--gold-light); font-family:var(--font-title); font-size:1.15rem;">Kein Buch ausgewählt</h3>
+              <div id="activeBookActions" style="display:none; gap:0.4rem;">
+                <button class="btn" style="padding:0.25rem 0.6rem; font-size:0.75rem;" onclick="renameCurrentBook()">✏️ Umbenennen</button>
+                <button class="btn btn-danger" style="padding:0.25rem 0.6rem; font-size:0.75rem;" onclick="deleteCurrentBook()">Buch löschen</button>
+              </div>
+            </div>
+            <textarea id="activeBookContent" style="min-height:420px; font-size:1rem; line-height:1.6;" placeholder="Schreibe deine Notizen zu dieser Session..." oninput="saveCurrentBookContent()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 8: NOTIZEN & RP (Charakterbeschreibung.pdf) -->
+      <div id="notesTab" class="tab-content">
+        <div class="grid-2">
+          <div class="card">
+            <h2>Profil & Vergangenheit</h2>
+            <label>Aussehen</label>
+            <textarea id="desc_aussehen" placeholder="Größe, Statur, Narben, Haare..." onchange="saveData()"></textarea>
+
+            <label>Backstory (Hintergrund)</label>
+            <textarea id="desc_backstory" style="min-height:140px;" placeholder="Woher stammst du? Was trieb dich ins Abenteuer?" onchange="saveData()"></textarea>
+
+            <label>Bekannte, Freunde & Feinde</label>
+            <textarea id="desc_kontakte" onchange="saveData()"></textarea>
+
+            <label>Ziele</label>
+            <textarea id="desc_ziele" onchange="saveData()"></textarea>
+          </div>
+
+          <div class="card">
+            <h2>Wesen & Charakterzüge</h2>
+            <label>Ideale</label>
+            <textarea id="desc_ideale" onchange="saveData()"></textarea>
+
+            <label>Bindungen</label>
+            <textarea id="desc_bindungen" onchange="saveData()"></textarea>
+
+            <label>Schwächen</label>
+            <textarea id="desc_schwaechen" onchange="saveData()"></textarea>
+
+            <label>Sonstiges zum Charakter</label>
+            <textarea id="desc_sonstiges" style="min-height:140px;" onchange="saveData()"></textarea>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: TALENT ERSTELLEN -->
+  <div id="talentModal" class="modal-backdrop">
+    <div class="modal-window">
+      <h3>Neues Talent erlernen</h3>
+      <label>Name des Talents</label>
+      <input type="text" id="mTalentName" placeholder="z. B. Flammenlanze, Berserkerrausch, Segnung">
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:0.8rem;">
+        <div>
+          <label>Talentkategorie</label>
+          <select id="mTalentCategory" onchange="handleModalCategoryChange()">
+            <option value="rast">Rast-Talent (Großer Slot)</option>
+            <option value="kampf">Kampf-Talent (Kleiner Slot)</option>
+            <option value="passiv">Passives Talent (Dauerhaft)</option>
+          </select>
+        </div>
+        <div>
+          <label>Effekt-Typ</label>
+          <select id="mTalentType" onchange="updateModalTargetOptions()">
+          </select>
+        </div>
+      </div>
+
+      <div id="targetRow" style="margin-top:0.4rem;">
+        <label>Zielbereich</label>
+        <select id="mTalentTarget" onchange="updatePreviewStat()">
+          <option value="Single Target">Single Target (1 Ziel)</option>
+          <option value="Fläche (max. 3 Ziele)">Fläche (2–3 Ziele)</option>
+        </select>
+      </div>
+
+      <div style="background:var(--bg-input); border:1px solid var(--border); border-radius:4px; padding:0.8rem; margin:0.8rem 0;">
+        <span style="font-size:0.75rem; text-transform:uppercase; color:var(--text-dim); font-weight:bold;">Berechneter Regelwert (Rang I, 1 Start-Slot):</span>
+        <div id="modalStatPreview" style="font-size:1.15rem; font-weight:bold; color:var(--gold-light); margin-top:0.2rem;">-</div>
+      </div>
+
+      <label>Persönliche Notiz / Flavour-Text (Optional)</label>
+      <input type="text" id="mTalentFlavour" placeholder="z. B. Richtet heiligen Lichtschaden an...">
+
+      <div style="display:flex; justify-content:flex-end; gap:0.6rem; margin-top:1rem;">
+        <button class="btn" onclick="closeTalentModal()">Abbrechen</button>
+        <button class="btn btn-gold" onclick="confirmAddTalent()">Erlernen</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let char = {
+      created: false,
+      name: '',
+      race: '',
+      customClass: '',
+      avatar: '',
+      category: 'nahkampf',
+      subclass: 'krieger',
+      level: 1,
+      availableTP: 0,
+      extraSkillPoints: 0,
+      shortRestsRemaining: 2,
+      curGBP: 0,
+      curLP: 120,
+      manualArmor: 0,
+      skills: {
+        handeln: [
+          { name: 'Nahkampf', points: 100 },
+          { name: 'Athletik', points: 100 }
+        ],
+        wissen: [
+          { name: 'Orientierung', points: 100 }
+        ],
+        soziales: [
+          { name: 'Einschüchtern', points: 100 }
+        ]
+      },
+      talents: [],
+      books: [
+        { id: 1, title: 'Buch Session 1', content: '' }
+      ],
+      activeBookId: 1
+    };
+
+    const subclassOptions = {
+      nahkampf: [
+        { id: 'krieger', name: 'Krieger (+20 LP, +3 Handeln-Grundwert, -3 Soziales)' },
+        { id: 'schurke', name: 'Schurke (+1 GBP, +3 Soziales-Grundwert, -3 Wissen)' }
+      ],
+      geist: [
+        { id: 'gelehrter', name: 'Gelehrter (+3 Wissen-Grundwert, +1 Start-TP, -10 LP, -3 Handeln)' },
+        { id: 'kuenstler', name: 'Künstler (+3 Soziales-Grundwert, +1W20 Sozialaktion, -10 LP, -3 Handeln)' }
+      ],
+      praktiker: [
+        { id: 'handwerker', name: 'Handwerker (+3 Handeln-Grundwert, Item-Verbesserung, -3 Wissen)' },
+        { id: 'alchemist', name: 'Alchemist (Heilkräuter, +2 Wissen-Grundwert, -1 Soziales, -1 Handeln)' },
+        { id: 'waldlaeufer', name: 'Waldläufer (+3 Handeln-Grundwert, 1x Ziel markieren (+1W6), -3 Soziales)' }
+      ]
+    };
+
+    function handleAvatarUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (file.size > 2.5 * 1024 * 1024) {
+        return alert('Das Bild ist zu groß (maximal 2.5 MB erlaubt).');
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        char.avatar = e.target.result;
+        updateAvatarDisplays();
+        saveData();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeAvatar() {
+      char.avatar = '';
+      updateAvatarDisplays();
+      saveData();
+    }
+
+    function updateAvatarDisplays() {
+      const hasAvatar = !!char.avatar;
+
+      const createImg = document.getElementById('createAvatarPreview');
+      const createPlh = document.getElementById('createAvatarPlaceholder');
+      if (hasAvatar) {
+        createImg.src = char.avatar;
+        createImg.style.display = 'block';
+        createPlh.style.display = 'none';
+      } else {
+        createImg.src = '';
+        createImg.style.display = 'none';
+        createPlh.style.display = 'block';
+      }
+
+      const mainImg = document.getElementById('mainAvatarDisplay');
+      const mainPlh = document.getElementById('mainAvatarPlaceholder');
+      if (hasAvatar) {
+        mainImg.src = char.avatar;
+        mainImg.style.display = 'block';
+        mainPlh.style.display = 'none';
+      } else {
+        mainImg.src = '';
+        mainImg.style.display = 'none';
+        mainPlh.style.display = 'block';
+      }
+
+      const tbImg = document.getElementById('toolbarAvatar');
+      const tbIcon = document.getElementById('toolbarFallbackIcon');
+      if (hasAvatar) {
+        tbImg.src = char.avatar;
+        tbImg.style.display = 'inline-block';
+        tbIcon.style.display = 'none';
+      } else {
+        tbImg.src = '';
+        tbImg.style.display = 'none';
+        tbIcon.style.display = 'inline-block';
+      }
+    }
+
+    function updateCreationSubclasses() {
+      const cat = document.getElementById('createCategory').value;
+      const select = document.getElementById('createSubClass');
+      select.innerHTML = '';
+      subclassOptions[cat].forEach(opt => {
+        const el = document.createElement('option');
+        el.value = opt.id;
+        el.innerText = opt.name;
+        select.appendChild(el);
+      });
+    }
+
+    function finishCreation() {
+      const name = document.getElementById('createName').value.trim();
+      if (!name) return alert('Bitte gib deinem Helden einen Namen.');
+
+      char.created = true;
+      char.name = name;
+      char.race = document.getElementById('createRace').value.trim();
+      char.customClass = document.getElementById('createCustomClass').value.trim();
+      char.category = document.getElementById('createCategory').value;
+      char.subclass = document.getElementById('createSubClass').value;
+      char.level = 1;
+      char.availableTP = (char.subclass === 'gelehrter') ? 1 : 0;
+      char.extraSkillPoints = 0;
+      char.shortRestsRemaining = 2;
+
+      let maxLP = 100;
+      if (char.subclass === 'krieger') maxLP += 20;
+      if (char.subclass === 'gelehrter' || char.subclass === 'kuenstler') maxLP -= 10;
+      char.curLP = maxLP;
+
+      saveData();
+      applyCharacterState();
+      resetGBP();
+    }
+
+    function toggleEditMode() {
+      if (confirm('Möchtest du zur Charaktererstellung zurückkehren, um Basisdaten wie Name, Porträt oder Rolle anzupassen?')) {
+        char.created = false;
+        applyCharacterState();
+      }
+    }
+
+    function applyCharacterState() {
+      updateAvatarDisplays();
+
+      if (!char.created) {
+        document.getElementById('creationScreen').style.display = 'block';
+        document.getElementById('gameplaySection').style.display = 'none';
+        document.getElementById('playToolbar').style.display = 'none';
+        document.getElementById('mainNav').style.display = 'none';
+        
+        document.getElementById('createName').value = char.name || '';
+        document.getElementById('createRace').value = char.race || '';
+        document.getElementById('createCustomClass').value = char.customClass || '';
+        document.getElementById('createCategory').value = char.category || 'nahkampf';
+        updateCreationSubclasses();
+        if (char.subclass) document.getElementById('createSubClass').value = char.subclass;
+      } else {
+        document.getElementById('creationScreen').style.display = 'none';
+        document.getElementById('gameplaySection').style.display = 'block';
+        document.getElementById('playToolbar').style.display = 'flex';
+        document.getElementById('mainNav').style.display = 'flex';
+        renderSkills();
+        updateCalculations();
+        renderAllTalentViews();
+        renderBooks();
+      }
+    }
+
+    function showTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // ==================== HtbaH FÄHIGKEITEN & BERECHNUNG ====================
+    function getCategorySum(cat) {
+      if (!char.skills[cat]) return 0;
+      return char.skills[cat].reduce((sum, s) => sum + (parseInt(s.points) || 0), 0);
+    }
+
+    function getTotalSpentPoints() {
+      return getCategorySum('handeln') + getCategorySum('wissen') + getCategorySum('soziales');
+    }
+
+    function getClassModifierOnBase(cat) {
+      let mod = 0;
+      if (char.subclass === 'krieger') {
+        if (cat === 'handeln') mod += 3;
+        if (cat === 'soziales') mod -= 3;
+      } else if (char.subclass === 'schurke') {
+        if (cat === 'soziales') mod += 3;
+        if (cat === 'wissen') mod -= 3;
+      } else if (char.subclass === 'gelehrter') {
+        if (cat === 'wissen') mod += 3;
+        if (cat === 'handeln') mod -= 3;
+      } else if (char.subclass === 'kuenstler') {
+        if (cat === 'soziales') mod += 3;
+        if (cat === 'handeln') mod -= 3;
+      } else if (char.subclass === 'handwerker') {
+        if (cat === 'handeln') mod += 3;
+        if (cat === 'wissen') mod -= 3;
+      } else if (char.subclass === 'alchemist') {
+        if (cat === 'wissen') mod += 2;
+        if (cat === 'soziales') mod -= 1;
+        if (cat === 'handeln') mod -= 1;
+      } else if (char.subclass === 'waldlaeufer') {
+        if (cat === 'handeln') mod += 3;
+        if (cat === 'soziales') mod -= 3;
+      }
+      return mod;
+    }
+
+    function getEffectiveBaseValue(cat) {
+      const rawBase = Math.floor(getCategorySum(cat) / 10);
+      const mod = getClassModifierOnBase(cat);
+      return Math.max(0, rawBase + mod);
+    }
+
+    function calculateMaxGBP() {
+      const hBase = getEffectiveBaseValue('handeln');
+      const wBase = getEffectiveBaseValue('wissen');
+      const sBase = getEffectiveBaseValue('soziales');
+
+      let gbp = Math.floor(hBase / 10) + Math.floor(wBase / 10) + Math.floor(sBase / 10);
+      if (char.subclass === 'schurke') gbp += 1;
+      if (char.category === 'geist') gbp += (char.level - 1);
+
+      return gbp;
+    }
+
+    function renderSkills() {
+      ['handeln', 'wissen', 'soziales'].forEach(cat => {
+        const container = document.getElementById(`skillsList_${cat}`);
+        container.innerHTML = '';
+        const rawBase = Math.floor(getCategorySum(cat) / 10);
+        const mod = getClassModifierOnBase(cat);
+        const effectiveBase = getEffectiveBaseValue(cat);
+
+        char.skills[cat].forEach((s, idx) => {
+          const row = document.createElement('div');
+          row.className = 'skill-row';
+          const target = (parseInt(s.points) || 0) + effectiveBase;
+
+          row.innerHTML = `
+            <input type="text" value="${s.name}" placeholder="Fähigkeit" onchange="updateSkillName('${cat}', ${idx}, this.value)">
+            <input type="number" value="${s.points}" placeholder="0" min="0" step="5" oninput="updateSkillPoints('${cat}', ${idx}, this.value)">
+            <div class="skill-total" title="Punkte (${s.points}) + Grundwert (${effectiveBase}%)">
+              ${target}%
+            </div>
+            <button class="btn btn-danger" style="padding:0.2rem 0.4rem; font-size:0.75rem;" onclick="removeSkillRow('${cat}', ${idx})">✕</button>
+          `;
+          container.appendChild(row);
+        });
+
+        document.getElementById(`base${capitalize(cat)}Badge`).innerText = `Grundwert: ${effectiveBase}% (${rawBase}${mod !== 0 ? (mod > 0 ? '+' + mod : mod) : ''})`;
+      });
+
+      const totalAllowed = 400 + ((char.level - 1) * 3) + (char.extraSkillPoints || 0);
+      const spent = getTotalSpentPoints();
+      document.getElementById('spentPointsDisplay').innerText = spent;
+      document.getElementById('totalPointsAllowedDisplay').innerText = totalAllowed;
+      document.getElementById('skillPointsDisplay').innerText = `Freie Fähigkeitspunkte: ${totalAllowed - spent}`;
+
+      const hMod = getClassModifierOnBase('handeln');
+      const wMod = getClassModifierOnBase('wissen');
+      const sMod = getClassModifierOnBase('soziales');
+      let note = `Klassenrollen-Modifikatoren auf Grundwerte: Handeln (${hMod >= 0 ? '+' : ''}${hMod}), Wissen (${wMod >= 0 ? '+' : ''}${wMod}), Soziales (${sMod >= 0 ? '+' : ''}${sMod})`;
+      document.getElementById('classBonusNote').innerText = note;
+    }
+
+    function addSkillRow(cat) {
+      char.skills[cat].push({ name: '', points: 0 });
+      renderSkills();
+      updateCalculations();
+    }
+
+    function removeSkillRow(cat, idx) {
+      char.skills[cat].splice(idx, 1);
+      renderSkills();
+      updateCalculations();
+    }
+
+    function updateSkillName(cat, idx, val) {
+      char.skills[cat][idx].name = val;
+      saveData();
+    }
+
+    function updateSkillPoints(cat, idx, val) {
+      char.skills[cat][idx].points = parseInt(val) || 0;
+      renderSkills();
+      updateCalculations();
+    }
+
+    // ==================== PASSIVE TALENTE BERECHNUNG ====================
+    function calculatePassiveBonus(bonusType) {
+      if (!char.talents) return 0;
+      let total = 0;
+      char.talents.forEach(t => {
+        if (t.category === 'passiv') {
+          if (bonusType === 'lp' && t.effectType === 'Passiv: LP') {
+            total += (t.rank === 'Rang I' ? 5 : (t.rank === 'Rang II' ? 10 : 15));
+          } else if (bonusType === 'armor' && t.effectType === 'Passiv: Rüstung') {
+            total += (t.rank === 'Rang I' ? 1 : (t.rank === 'Rang II' ? 2 : 3));
+          }
+        }
+      });
+      return total;
+    }
+
+    // ==================== BERECHNUNGEN & KAMPFWERT ====================
+    function updateCalculations() {
+      if (!char.created) return;
+
+      // 1. Max LP (inklusive passiver Talente)
+      let maxLP = 100 + ((char.level - 1) * 10);
+      if (char.subclass === 'krieger') maxLP += 20;
+      if (char.subclass === 'gelehrter' || char.subclass === 'kuenstler') maxLP -= 10;
+      if (char.category === 'nahkampf') maxLP += ((char.level - 1) * 20);
+
+      const passiveLP = calculatePassiveBonus('lp');
+      maxLP += passiveLP;
+
+      if (char.curLP === undefined || char.curLP > maxLP) char.curLP = maxLP;
+      document.getElementById('lpMaxDisplay').innerText = maxLP;
+      document.getElementById('lpCurrentDisplay').innerText = char.curLP;
+      document.getElementById('currentLP').value = char.curLP;
+
+      const pct = Math.max(0, Math.min(100, (char.curLP / maxLP) * 100));
+      document.getElementById('lpBarFill').style.width = pct + '%';
+
+      // 2. Kampfwert
+      const baseH = getEffectiveBaseValue('handeln');
+      const baseW = getEffectiveBaseValue('wissen');
+      const baseS = getEffectiveBaseValue('soziales');
+
+      let bonus = 30;
+      let usedBase = baseH;
+
+      if (char.category === 'nahkampf') {
+        bonus = 35;
+        usedBase = baseH;
+      } else if (char.category === 'praktiker') {
+        bonus = 30;
+        usedBase = Math.max(baseH, baseW);
+      } else if (char.category === 'geist') {
+        bonus = 30;
+        usedBase = Math.max(baseW, baseS);
+      }
+
+      let combatRate = usedBase + bonus + (5 * char.level);
+      document.getElementById('combatRateDisplay').innerText = combatRate + "%";
+
+      // 3. Rüstung & GBP (inklusive passiver Talente)
+      const passiveArmor = calculatePassiveBonus('armor');
+      const manualArmor = parseInt(document.getElementById('manualArmorBonus').value) || 0;
+      char.manualArmor = manualArmor;
+      const totalArmor = manualArmor + passiveArmor;
+
+      document.getElementById('armorDisplay').innerText = totalArmor;
+      document.getElementById('quickArmorNote').innerText = totalArmor;
+
+      const armorBreakdownEl = document.getElementById('armorBreakdownLabel');
+      if (armorBreakdownEl) {
+        if (passiveArmor > 0) {
+          armorBreakdownEl.innerText = `(${manualArmor} Rüstung + ${passiveArmor} Passiv = ${totalArmor} Gesamtrüstung)`;
+        } else {
+          armorBreakdownEl.innerText = `(Fester Schadensabzug pro Treffer)`;
+        }
+      }
+
+      const maxGBP = calculateMaxGBP();
+      if (char.curGBP === undefined) char.curGBP = maxGBP;
+      document.getElementById('gbpDisplay').innerText = `${char.curGBP} / ${maxGBP}`;
+      document.getElementById('currentGBP').value = char.curGBP;
+
+      // Kurze Rast Zähler
+      if (char.shortRestsRemaining === undefined) char.shortRestsRemaining = 2;
+      document.getElementById('shortRestCounter').innerText = `(${char.shortRestsRemaining}/2)`;
+      const shortRestBtn = document.getElementById('shortRestBtn');
+      if (char.shortRestsRemaining <= 0) {
+        shortRestBtn.disabled = true;
+        shortRestBtn.style.opacity = '0.5';
+        shortRestBtn.style.cursor = 'not-allowed';
+      } else {
+        shortRestBtn.disabled = false;
+        shortRestBtn.style.opacity = '1';
+        shortRestBtn.style.cursor = 'pointer';
+      }
+
+      // Hero Name & Meta
+      document.getElementById('quickHeroDisplay').innerText = char.name;
+      const classLabel = char.customClass 
+        ? `${char.customClass} (${capitalize(char.subclass)}, Stufe ${char.level})` 
+        : `${capitalize(char.subclass)} (Stufe ${char.level})`;
+      document.getElementById('quickClassDisplay').innerText = classLabel;
+      document.getElementById('tpCounterDisplay').innerText = `Freie TP: ${char.availableTP}`;
+
+      // Header auf Hauptseite
+      document.getElementById('mainHeroHeaderName').innerText = char.name;
+      document.getElementById('mainHeroHeaderSub').innerText = `${char.customClass ? char.customClass + ' — ' : ''}${char.race || 'Unbekanntes Volk'} (${capitalize(char.subclass)}, Stufe ${char.level})`;
+
+      updateTalentCapInfo();
+      renderAllTalentViews();
+      saveData();
+    }
+
+    function capitalize(s) {
+      return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
+    }
+
+    function modifyGBP(delta) {
+      const maxGBP = calculateMaxGBP();
+      char.curGBP = Math.max(0, Math.min(maxGBP, (char.curGBP || 0) + delta));
+      document.getElementById('currentGBP').value = char.curGBP;
+      document.getElementById('gbpDisplay').innerText = `${char.curGBP} / ${maxGBP}`;
+      saveData();
+    }
+
+    function resetGBP() {
+      char.curGBP = calculateMaxGBP();
+      document.getElementById('currentGBP').value = char.curGBP;
+      document.getElementById('gbpDisplay').innerText = `${char.curGBP} / ${calculateMaxGBP()}`;
+      saveData();
+    }
+
+    // ==================== STUFENAUFSTIEG (MEILENSTEIN) ====================
+    function levelUpHero() {
+      if (!confirm(`Glückwunsch zum Meilenstein! Möchtest du Stufe ${char.level + 1} erreichen? (+10 LP, +1 Talentpunkt, +3 Fähigkeitenpunkte)`)) return;
+
+      char.level += 1;
+      char.availableTP += 1;
+
+      if (char.category === 'geist') {
+        char.extraSkillPoints = (char.extraSkillPoints || 0) + 2;
+      } else if (char.category === 'nahkampf') {
+        char.extraSkillPoints = (char.extraSkillPoints || 0) + 2;
+      } else if (char.category === 'praktiker') {
+        char.extraSkillPoints = (char.extraSkillPoints || 0) + 2;
+      }
+
+      let maxLP = 100 + ((char.level - 1) * 10);
+      if (char.subclass === 'krieger') maxLP += 20;
+      if (char.subclass === 'gelehrter' || char.subclass === 'kuenstler') maxLP -= 10;
+      if (char.category === 'nahkampf') maxLP += ((char.level - 1) * 20);
+      maxLP += calculatePassiveBonus('lp');
+      char.curLP = maxLP;
+
+      alert(`Stufe ${char.level} erreicht! Lebenspunkte, 1 Talentpunkt und Fähigkeitenpunkte wurden gutgeschrieben.`);
+      renderSkills();
+      updateCalculations();
+    }
+
+    // ==================== VITALWERTE & RAST ====================
+    function modifyLP(delta) {
+      let maxLP = parseInt(document.getElementById('lpMaxDisplay').innerText) || 100;
+      char.curLP = Math.max(0, Math.min(maxLP, (char.curLP || 0) + delta));
+      updateCalculations();
+    }
+
+    function applyDamage() {
+      const val = parseInt(document.getElementById('lpModInput').value) || 0;
+      if (val <= 0) return;
+      const totalArmor = (char.manualArmor || 0) + calculatePassiveBonus('armor');
+      const net = Math.max(1, val - totalArmor);
+      modifyLP(-net);
+      document.getElementById('lpModInput').value = '';
+    }
+
+    function applyHeal() {
+      const val = parseInt(document.getElementById('lpModInput').value) || 0;
+      if (val <= 0) return;
+      modifyLP(val);
+      document.getElementById('lpModInput').value = '';
+    }
+
+    function restShort() {
+      if (char.shortRestsRemaining <= 0) {
+        return alert('Du hast bereits 2 kurze Rasten genutzt. Du musst eine lange Rast einlegen!');
+      }
+
+      char.shortRestsRemaining -= 1;
+      const heal = 15 + (5 * char.level);
+      modifyLP(heal);
+      alert(`Kurze Rast beendet: +${heal} LP erhalten! Verbleibende kurze Rasten: ${char.shortRestsRemaining}/2`);
+      updateCalculations();
+    }
+
+    function restLong() {
+      let maxLP = parseInt(document.getElementById('lpMaxDisplay').innerText) || 100;
+      char.curLP = maxLP;
+
+      char.shortRestsRemaining = 2;
+
+      if (char.talents) {
+        char.talents.forEach(t => {
+          if (t.category === 'rast') t.currentUses = t.maxUses;
+        });
+      }
+
+      resetGBP();
+      resetCombatTalents();
+      updateCalculations();
+      alert('Lange Rast beendet: Volle LP, alle Rast-Slots, kurze Rasten (2/2) und Geistesblitze wiederhergestellt!');
+    }
+
+    function resetCombatTalents() {
+      if (char.talents) {
+        char.talents.forEach(t => {
+          if (t.category === 'kampf') t.currentUses = t.maxUses;
+        });
+      }
+      renderAllTalentViews();
+      saveData();
+    }
+
+    // ==================== REGELWERK: FESTE WERTE BERECHNUNG ====================
+    function getFixedTalentStat(category, type, target, rank) {
+      const isMulti = target.includes('Fläche');
+
+      if (category === 'rast') {
+        let dice = 4;
+        if (!isMulti) {
+          if (rank === 'Rang I') dice = 4;
+          else if (rank === 'Rang II') dice = 6;
+          else if (rank === 'Rang III') dice = 8;
+        } else {
+          if (rank === 'Rang I') dice = 2;
+          else if (rank === 'Rang II') dice = 3;
+          else if (rank === 'Rang III') dice = 4;
+        }
+
+        let extraDice = (char.category === 'geist') ? 1 : 0;
+        let totalDice = dice + extraDice;
+
+        return `${totalDice}W10 ${type}${isMulti ? ' pro Ziel' : ''}${extraDice > 0 ? ' (inkl. +1W10 Geist-Bonus)' : ''}`;
+      }
+
+      if (category === 'kampf' && type === 'Schaden') {
+        let diceCount = 3;
+        let diceType = 'W6';
+
+        if (!isMulti) {
+          diceType = 'W6';
+          if (rank === 'Rang I') diceCount = 3;
+          else if (rank === 'Rang II') diceCount = 4;
+          else if (rank === 'Rang III') diceCount = 5;
+        } else {
+          if (rank === 'Rang I') { diceCount = 2; diceType = 'W4'; }
+          else if (rank === 'Rang II') { diceCount = 2; diceType = 'W6'; }
+          else if (rank === 'Rang III') { diceCount = 3; diceType = 'W4'; }
+        }
+
+        let extraDice = (char.category === 'nahkampf') ? 1 : 0;
+        let totalDice = diceCount + extraDice;
+
+        return `${totalDice}${diceType} Schaden${isMulti ? ' pro Ziel' : ''}${extraDice > 0 ? ` (inkl. +1${diceType} Nahkampf-Bonus)` : ''}`;
+      }
+
+      if (type === 'Buff / Debuff (Probe)') {
+        let val = 10;
+        if (!isMulti) {
+          if (rank === 'Rang I') val = 10;
+          else if (rank === 'Rang II') val = 15;
+          else if (rank === 'Rang III') val = 20;
+        } else {
+          if (rank === 'Rang I') val = 5;
+          else if (rank === 'Rang II') val = 8;
+          else if (rank === 'Rang III') val = 10;
+        }
+
+        let bonus = 0;
+        if (char.category === 'praktiker') {
+          bonus = isMulti ? 3 : 5;
+        }
+        let totalVal = val + bonus;
+
+        return `±${totalVal} auf Proben (Dauer: 1 Runde)${isMulti ? ' pro Ziel' : ''}${bonus > 0 ? ' (inkl. +' + bonus + ' Praktiker-Bonus)' : ''}`;
+      }
+
+      if (type === 'Buff / Debuff (Rüstung)') {
+        let val = 2;
+        if (!isMulti) {
+          if (rank === 'Rang I') val = 2;
+          else if (rank === 'Rang II') val = 4;
+          else if (rank === 'Rang III') val = 6;
+        } else {
+          if (rank === 'Rang I') val = 1;
+          else if (rank === 'Rang II') val = 2;
+          else if (rank === 'Rang III') val = 3;
+        }
+
+        let bonus = 0;
+        if (char.category === 'praktiker' && !isMulti) {
+          bonus = 1;
+        }
+        let totalVal = val + bonus;
+
+        return `±${totalVal} Rüstungsschutz (Dauer: 1 Runde)${isMulti ? ' pro Ziel' : ''}${bonus > 0 ? ' (inkl. +1 Praktiker-Bonus)' : ''}`;
+      }
+
+      if (category === 'passiv') {
+        if (type === 'Passiv: Probe') {
+          let p = (rank === 'Rang I') ? 5 : (rank === 'Rang II' ? 10 : 15);
+          return `+${p} auf situationsbedingte Probe`;
+        }
+        if (type === 'Passiv: LP') {
+          let lp = (rank === 'Rang I') ? 5 : (rank === 'Rang II' ? 10 : 15);
+          return `+${lp} Permanente maximale Lebenspunkte (automatisch angerechnet)`;
+        }
+        if (type === 'Passiv: Rüstung') {
+          let arm = (rank === 'Rang I') ? 1 : (rank === 'Rang II' ? 2 : 3);
+          return `+${arm} Fester Rüstungsschutz (automatisch angerechnet)`;
+        }
+      }
+
+      return '-';
+    }
+
+    // ==================== TALENT-SYSTEM & ANSICHTEN ====================
+    function updateTalentCapInfo() {
+      const rastCount = char.talents.filter(t => t.category === 'rast').length;
+      const kampfCount = char.talents.filter(t => t.category === 'kampf').length;
+      const passivCount = char.talents.filter(t => t.category === 'passiv').length;
+
+      const freeRast = Math.max(0, 1 - rastCount);
+      const freeKampf = Math.max(0, 2 - kampfCount);
+      const freePassiv = Math.max(0, 1 - passivCount);
+
+      let catBonusText = '';
+      if (char.category === 'nahkampf') catBonusText = 'Nahkampf-Kategoriebonus: +1 Schadenswürfel bei Kampf-Talenten.';
+      else if (char.category === 'geist') catBonusText = 'Geist-Kategoriebonus: +1 Schadens-/Heilungswürfel bei Rast-Slots.';
+      else if (char.category === 'praktiker') catBonusText = 'Praktiker-Kategoriebonus: +5 Single / +3 Multi auf Proben bzw. +1 Rüstung bei Buffs/Debuffs.';
+
+      document.getElementById('talentCapInfo').innerHTML = `
+        <strong>Talentübersicht:</strong> 
+        Rast-Talente: ${rastCount} | Kampf-Talente: ${kampfCount} | Passive: ${passivCount}<br>
+        <span style="color:var(--gold-light);">Kostenlose Start-Plätze übrig: ${freeRast}x Rast, ${freeKampf}x Kampf, ${freePassiv}x Passiv</span><br>
+        <span style="color:var(--gold);">Verfügbare Talentpunkte (TP) für neue Talente / Verbesserungen: <strong>${char.availableTP}</strong></span><br>
+        <span style="color:#74b9ff; font-size:0.8rem;">${catBonusText}</span>
+      `;
+    }
+
+    function renderAllTalentViews() {
+      renderManagementTalents();
+      renderActionsRastTalents();
+      renderActionsCombatTalents();
+    }
+
+    function renderActionsRastTalents() {
+      const container = document.getElementById('actionsRastTalentsList');
+      container.innerHTML = '';
+
+      const rastTalents = char.talents.filter(t => t.category === 'rast');
+      if (rastTalents.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-dim); font-size:0.9rem;">Noch keine Rast-Talente erlernt.</p>';
+        return;
+      }
+
+      rastTalents.forEach(t => {
+        const globalIdx = char.talents.indexOf(t);
+        const card = document.createElement('div');
+        card.className = 'talent-card';
+        card.style.padding = '0.9rem';
+
+        const statText = getFixedTalentStat(t.category, t.effectType, t.target, t.rank);
+
+        let bubbles = '';
+        for (let i = 1; i <= t.maxUses; i++) {
+          const isFilled = i <= t.currentUses;
+          bubbles += `<span class="slot-bubble ${isFilled ? 'filled' : ''}" onclick="toggleSingleSlot(${globalIdx}, ${i})" title="Klicken zum Verbrauchen / Reaktivieren">${isFilled ? '✦' : '✧'}</span>`;
+        }
+
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem;">
+            <div>
+              <strong style="color:var(--gold-light); font-size:1.05rem;">${t.name}</strong>
+              <span class="pill-badge badge-rast">${t.rank}</span>
+              <span class="pill-badge badge-stat">${statText}</span>
+              <span class="pill-badge">${t.target}</span>
+            </div>
+            <div class="slot-bubble-row">
+              <span style="font-size:0.8rem; color:var(--text-dim);">Große Slots verfügbar: <strong>${t.currentUses} / ${t.maxUses}</strong></span>
+              ${bubbles}
+            </div>
+          </div>
+          ${t.flavour ? `<div style="font-size:0.85rem; color:var(--text-dim); margin-top:0.4rem; font-style:italic;">"${t.flavour}"</div>` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderActionsCombatTalents() {
+      const container = document.getElementById('actionsCombatTalentsList');
+      container.innerHTML = '';
+
+      const kampfTalents = char.talents.filter(t => t.category === 'kampf');
+      if (kampfTalents.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-dim); font-size:0.9rem;">Noch keine Kampf-Talente verzeichnet.</p>';
+        return;
+      }
+
+      kampfTalents.forEach(t => {
+        const globalIdx = char.talents.indexOf(t);
+        const card = document.createElement('div');
+        card.className = 'talent-card';
+
+        const hasUses = t.currentUses > 0;
+        const statText = getFixedTalentStat(t.category, t.effectType, t.target, t.rank);
+
+        card.innerHTML = `
+          <div class="talent-head">
+            <div>
+              <span class="talent-title">${t.name}</span>
+              <span class="pill-badge badge-kampf">${t.rank}</span>
+              <span class="pill-badge badge-stat">${statText}</span>
+              <span class="pill-badge">${t.target}</span>
+            </div>
+            <div>
+              <button class="btn ${hasUses ? 'btn-gold' : ''}" ${!hasUses ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''} onclick="useCombatTalent(${globalIdx})">
+                ${hasUses ? '⚡ Im Gefecht einsetzen' : '❌ Bereits verbraucht'}
+              </button>
+            </div>
+          </div>
+          ${t.flavour ? `<div style="font-size:0.85rem; color:var(--text-dim); margin-top:0.3rem; font-style:italic;">"${t.flavour}"</div>` : ''}
+          <div style="font-size:0.8rem; color:var(--text-dim); margin-top:0.5rem;">
+            Verfügbare Einsätze in diesem Gefecht: <strong style="color:${hasUses ? 'var(--gold-light)' : 'var(--blood-glow)'};">${t.currentUses} / ${t.maxUses}</strong>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function useCombatTalent(globalIdx) {
+      const t = char.talents[globalIdx];
+      if (t.currentUses > 0) {
+        t.currentUses -= 1;
+        renderAllTalentViews();
+        saveData();
+      }
+    }
+
+    function toggleSingleSlot(globalIdx, slotNumber) {
+      const t = char.talents[globalIdx];
+      if (slotNumber <= t.currentUses) {
+        t.currentUses = slotNumber - 1;
+      } else {
+        t.currentUses = slotNumber;
+      }
+      renderAllTalentViews();
+      saveData();
+    }
+
+    function renderManagementTalents() {
+      const container = document.getElementById('talentsList');
+      container.innerHTML = '';
+
+      if (!char.talents || char.talents.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-dim); font-size:0.9rem;">Noch keine Talente verzeichnet.</p>';
+        return;
+      }
+
+      char.talents.forEach((t, i) => {
+        const card = document.createElement('div');
+        card.className = 'talent-card';
+
+        let badgeClass = t.category === 'rast' ? 'badge-rast' : (t.category === 'kampf' ? 'badge-kampf' : 'badge-passiv');
+        let catText = t.category === 'rast' ? '🌙 Großer Slot (Rast)' : (t.category === 'kampf' ? '⚔️ Kleiner Slot (Kampf)' : '🛡️ Passiv');
+        const statText = getFixedTalentStat(t.category, t.effectType, t.target, t.rank);
+
+        card.innerHTML = `
+          <div class="talent-head">
+            <div>
+              <span class="talent-title">${t.name}</span>
+              <span class="pill-badge ${badgeClass}">${catText}</span>
+              <span class="pill-badge badge-stat">${statText}</span>
+              <span class="pill-badge">${t.rank}</span>
+              ${t.category !== 'passiv' ? `<span class="pill-badge">${t.target}</span>` : ''}
+            </div>
+            <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+              ${t.rank !== 'Rang III' ? `<button class="btn" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="upgradeTalentRank(${i})">⬆️ Rang steigern (1 TP)</button>` : ''}
+              ${t.category !== 'passiv' ? `<button class="btn" style="padding:0.2rem 0.6rem; font-size:0.75rem;" onclick="upgradeTalentSlot(${i})">➕ Slot +1 (1 TP)</button>` : ''}
+              <button class="btn btn-danger" style="padding:0.2rem 0.5rem; font-size:0.75rem;" onclick="deleteTalent(${i})">Löschen</button>
+            </div>
+          </div>
+          ${t.flavour ? `<div style="font-size:0.85rem; color:var(--text-dim); margin-top:0.3rem; font-style:italic;">"${t.flavour}"</div>` : ''}
+          ${t.category !== 'passiv' ? `
+            <div class="counter-btn-row">
+              <span>Slots / Nutzungen: <strong>${t.currentUses} / ${t.maxUses}</strong></span>
+              <button class="counter-btn" onclick="adjustTalentCurrentUses(${i}, -1)">-</button>
+              <button class="counter-btn" onclick="adjustTalentCurrentUses(${i}, 1)">+</button>
+            </div>
+          ` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ==================== MODAL STEUERUNG FÜR FESTE WERTE ====================
+    function openTalentModal() {
+      const rastCount = char.talents.filter(t => t.category === 'rast').length;
+      const kampfCount = char.talents.filter(t => t.category === 'kampf').length;
+      const passivCount = char.talents.filter(t => t.category === 'passiv').length;
+
+      const freeSlots = (rastCount < 1) || (kampfCount < 2) || (passivCount < 1);
+      if (!freeSlots && char.availableTP <= 0) {
+        return alert('Keine freien Startslots oder Talentpunkte (TP) mehr übrig! Erreiche erst einen Meilenstein für den nächsten Stufenaufstieg.');
+      }
+
+      document.getElementById('mTalentName').value = '';
+      document.getElementById('mTalentFlavour').value = '';
+      document.getElementById('talentModal').classList.add('active');
+      handleModalCategoryChange();
+    }
+
+    function closeTalentModal() {
+      document.getElementById('talentModal').classList.remove('active');
+    }
+
+    function handleModalCategoryChange() {
+      const cat = document.getElementById('mTalentCategory').value;
+      const typeSelect = document.getElementById('mTalentType');
+      typeSelect.innerHTML = '';
+
+      if (cat === 'rast') {
+        typeSelect.innerHTML = `
+          <option value="Schaden">Schaden (Fester Wert)</option>
+          <option value="Heilung">Heilung (Fester Wert)</option>
+        `;
+        document.getElementById('targetRow').style.display = 'block';
+      } else if (cat === 'kampf') {
+        typeSelect.innerHTML = `
+          <option value="Schaden">Schaden (Fester Wert)</option>
+          <option value="Buff / Debuff (Probe)">Buff / Debuff: ± Proben-Wurf</option>
+          <option value="Buff / Debuff (Rüstung)">Buff / Debuff: ± Rüstungswert</option>
+        `;
+        document.getElementById('targetRow').style.display = 'block';
+      } else if (cat === 'passiv') {
+        typeSelect.innerHTML = `
+          <option value="Passiv: Probe">Bonus auf Proben (Permanent)</option>
+          <option value="Passiv: LP">Bonus auf Lebenspunkte (Permanent)</option>
+          <option value="Passiv: Rüstung">Bonus auf Rüstungsschutz (Permanent)</option>
+        `;
+        document.getElementById('targetRow').style.display = 'none';
+      }
+      updatePreviewStat();
+    }
+
+    function updateModalTargetOptions() {
+      updatePreviewStat();
+    }
+
+    function updatePreviewStat() {
+      const cat = document.getElementById('mTalentCategory').value;
+      const type = document.getElementById('mTalentType').value;
+      const target = document.getElementById('mTalentTarget').value;
+      const preview = getFixedTalentStat(cat, type, target, 'Rang I');
+      document.getElementById('modalStatPreview').innerText = preview;
+    }
+
+    function confirmAddTalent() {
+      const name = document.getElementById('mTalentName').value.trim();
+      if (!name) return alert('Bitte einen Namen für das Talent eingeben.');
+
+      const category = document.getElementById('mTalentCategory').value;
+      const effectType = document.getElementById('mTalentType').value;
+      const target = (category === 'passiv') ? 'Selbst' : document.getElementById('mTalentTarget').value;
+      const uses = 1;
+      const flavour = document.getElementById('mTalentFlavour').value.trim();
+
+      const rastCount = char.talents.filter(t => t.category === 'rast').length;
+      const kampfCount = char.talents.filter(t => t.category === 'kampf').length;
+      const passivCount = char.talents.filter(t => t.category === 'passiv').length;
+
+      let isFreeStartSlot = false;
+      if (category === 'rast' && rastCount < 1) isFreeStartSlot = true;
+      if (category === 'kampf' && kampfCount < 2) isFreeStartSlot = true;
+      if (category === 'passiv' && passivCount < 1) isFreeStartSlot = true;
+
+      if (!isFreeStartSlot) {
+        if (char.availableTP < 1) return alert('Keine freien Talentpunkte mehr!');
+        char.availableTP -= 1;
+      }
+
+      char.talents.push({
+        name,
+        category,
+        effectType,
+        target,
+        rank: 'Rang I',
+        maxUses: uses,
+        currentUses: uses,
+        flavour
+      });
+
+      closeTalentModal();
+      renderAllTalentViews();
+      updateCalculations();
+    }
+
+    function upgradeTalentRank(index) {
+      if (char.availableTP < 1) return alert('Du benötigst 1 Talentpunkt (TP), um den Rang zu steigern!');
+      const t = char.talents[index];
+
+      if (t.rank === 'Rang I') {
+        t.rank = 'Rang II';
+      } else if (t.rank === 'Rang II') {
+        t.rank = 'Rang III';
+      } else {
+        return alert('Dieses Talent ist bereits auf Rang III!');
+      }
+
+      char.availableTP -= 1;
+      renderAllTalentViews();
+      updateCalculations();
+    }
+
+    function upgradeTalentSlot(index) {
+      if (char.availableTP < 1) return alert('Du benötigst 1 Talentpunkt (TP), um die Nutzungen/Slots zu erhöhen!');
+      const t = char.talents[index];
+      t.maxUses += 1;
+      t.currentUses += 1;
+      char.availableTP -= 1;
+      renderAllTalentViews();
+      updateCalculations();
+    }
+
+    function adjustTalentCurrentUses(index, delta) {
+      const t = char.talents[index];
+      t.currentUses = Math.max(0, Math.min(t.maxUses, t.currentUses + delta));
+      renderAllTalentViews();
+      saveData();
+    }
+
+    function deleteTalent(index) {
+      if (confirm('Talent entfernen? Eventuell investierte Talentpunkte werden zurückerstattet.')) {
+        const t = char.talents[index];
+        if (t.rank === 'Rang II') char.availableTP += 1;
+        if (t.rank === 'Rang III') char.availableTP += 2;
+        if (t.maxUses > 1) char.availableTP += (t.maxUses - 1);
+
+        char.talents.splice(index, 1);
+        renderAllTalentViews();
+        updateCalculations();
+      }
+    }
+
+    // ==================== BÜCHER / CHRONIK-VERWALTUNG ====================
+    function renderBooks() {
+      if (!char.books || char.books.length === 0) {
+        char.books = [{ id: 1, title: 'Buch Session 1', content: '' }];
+        char.activeBookId = 1;
+      }
+
+      const navContainer = document.getElementById('bookTabsList');
+      navContainer.innerHTML = '';
+
+      char.books.forEach(b => {
+        const btn = document.createElement('button');
+        btn.className = `book-tab-btn ${b.id === char.activeBookId ? 'active' : ''}`;
+        btn.innerText = `📕 ${b.title}`;
+        btn.onclick = () => switchBook(b.id);
+        navContainer.appendChild(btn);
+      });
+
+      const currentBook = char.books.find(b => b.id === char.activeBookId) || char.books[0];
+      if (currentBook) {
+        char.activeBookId = currentBook.id;
+        document.getElementById('activeBookTitle').innerText = `📕 ${currentBook.title}`;
+        document.getElementById('activeBookContent').value = currentBook.content || '';
+        document.getElementById('activeBookActions').style.display = 'flex';
+        document.getElementById('activeBookContent').disabled = false;
+      } else {
+        document.getElementById('activeBookTitle').innerText = 'Kein Buch vorhanden';
+        document.getElementById('activeBookContent').value = '';
+        document.getElementById('activeBookActions').style.display = 'none';
+        document.getElementById('activeBookContent').disabled = true;
+      }
+    }
+
+    function switchBook(bookId) {
+      char.activeBookId = bookId;
+      renderBooks();
+    }
+
+    function addNewBook() {
+      const num = char.books.length + 1;
+      const title = prompt('Name des neuen Buches / Kapitels:', `Buch Session ${num}`);
+      if (title && title.trim() !== '') {
+        const newId = Date.now();
+        char.books.push({
+          id: newId,
+          title: title.trim(),
+          content: ''
+        });
+        char.activeBookId = newId;
+        renderBooks();
+        saveData();
+      }
+    }
+
+    function renameCurrentBook() {
+      const book = char.books.find(b => b.id === char.activeBookId);
+      if (!book) return;
+      const newTitle = prompt('Neuer Name für das Buch:', book.title);
+      if (newTitle && newTitle.trim() !== '') {
+        book.title = newTitle.trim();
+        renderBooks();
+        saveData();
+      }
+    }
+
+    function deleteCurrentBook() {
+      if (char.books.length <= 1) {
+        return alert('Es muss mindestens ein Buch in deiner Chronik erhalten bleiben!');
+      }
+      const book = char.books.find(b => b.id === char.activeBookId);
+      if (!book) return;
+
+      if (confirm(`Möchtest du das Buch "${book.title}" wirklich unwiderruflich verbrennen/löschen?`)) {
+        char.books = char.books.filter(b => b.id !== char.activeBookId);
+        char.activeBookId = char.books[0].id;
+        renderBooks();
+        saveData();
+      }
+    }
+
+    function saveCurrentBookContent() {
+      const book = char.books.find(b => b.id === char.activeBookId);
+      if (book) {
+        book.content = document.getElementById('activeBookContent').value;
+        saveData();
+      }
+    }
+
+    // ==================== SPEICHERN & LADEN ====================
+    const textFields = [
+      'coinKupfer', 'coinSilber', 'coinGold',
+      'eq_kopf', 'eq_gesicht', 'eq_hals', 'eq_schultern', 'eq_hemd', 'eq_koerper',
+      'eq_arme', 'eq_haende', 'eq_huefte', 'eq_fuesse', 'eq_ringe1', 'eq_ringe2',
+      'eq_haupthand', 'eq_nebenhand', 'eq_mythic',
+      'eq_misc1', 'eq_misc2', 'eq_misc3', 'eq_misc4', 'eq_misc5', 'eq_misc6',
+      'inv_deckel_l', 'inv_deckel_m', 'inv_deckel_r', 'inv_hauptfach',
+      'inv_tasche_l', 'inv_tasche_r', 'inv_boden', 'inv_phiole',
+      'desc_aussehen', 'desc_backstory', 'desc_kontakte', 'desc_ziele',
+      'desc_ideale', 'desc_bindungen', 'desc_schwaechen', 'desc_sonstiges'
+    ];
+
+    function saveData() {
+      const data = {
+        charCore: char,
+        fields: {}
+      };
+      textFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) data.fields[id] = el.value;
+      });
+      localStorage.setItem('zamonien_v15_save', JSON.stringify(data));
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem('zamonien_v15_save');
+      if (!raw) {
+        applyCharacterState();
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        char = parsed.charCore || char;
+        if (!char.skills) {
+          char.skills = { handeln: [], wissen: [], soziales: [] };
+        }
+        if (char.shortRestsRemaining === undefined) {
+          char.shortRestsRemaining = 2;
+        }
+        if (!char.books || char.books.length === 0) {
+          char.books = [{ id: 1, title: 'Buch Session 1', content: '' }];
+          char.activeBookId = 1;
+        }
+        if (parsed.fields) {
+          textFields.forEach(id => {
+            if (parsed.fields[id] !== undefined && document.getElementById(id)) {
+              document.getElementById(id).value = parsed.fields[id];
+            }
+          });
+        }
+        applyCharacterState();
+      } catch (e) {
+        console.error('Fehler beim Laden:', e);
+        applyCharacterState();
+      }
+    }
+
+    function exportJSON() {
+      saveData();
+      const raw = localStorage.getItem('zamonien_v15_save');
+      const filename = `${char.name || 'Held'}_Zamonien.json`;
+      const blob = new Blob([raw], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+    }
+
+    function importJSON(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          localStorage.setItem('zamonien_v15_save', JSON.stringify(parsed));
+          loadData();
+          alert('Charakter erfolgreich übertragen!');
+        } catch(err) {
+          alert('Ungültige Charakterdatei.');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function resetAll() {
+      if (confirm('Möchtest du diesen Charakter wirklich löschen und neu beginnen?')) {
+        localStorage.removeItem('zamonien_v15_save');
+        location.reload();
+      }
+    }
+
+    window.onload = loadData;
+  </script>
+</body>
+</html>
