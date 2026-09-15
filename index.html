@@ -261,7 +261,6 @@
 
     .btn-danger:hover { background: var(--blood); color: #fff; }
 
-    /* PORTRÄT */
     .portrait-section {
       display: flex;
       align-items: center;
@@ -300,7 +299,6 @@
       user-select: none;
     }
 
-    /* LP BAR */
     .lp-tracker {
       background: rgba(0,0,0,0.5);
       border: 1px solid var(--border);
@@ -482,7 +480,6 @@
 
     .counter-btn:hover { background: var(--gold); color: #000; }
 
-    /* BÜCHER CHRONIK STYLES */
     .book-tabs-nav {
       display: flex;
       gap: 0.4rem;
@@ -516,7 +513,6 @@
       box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
     }
 
-    /* MODAL */
     .modal-backdrop {
       display: none;
       position: fixed;
@@ -549,7 +545,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    /* SILHOUETTE & RUCKSACK */
     .silhouette-grid {
       display: grid;
       grid-template-columns: 1fr 140px 1fr;
@@ -600,7 +595,7 @@
     <p>Heldenverwaltung & PnP-Begleiter (HowToBeAHero Regelwerk)</p>
   </header>
 
-  <!-- OBERE LEISTE (IM SPIELMODUS) -->
+  <!-- OBERE LEISTE -->
   <div id="playToolbar" class="top-toolbar" style="display: none;">
     <div class="hero-meta-badge">
       <img id="toolbarAvatar" class="mini-avatar" src="" style="display:none;" alt="Avatar">
@@ -620,7 +615,7 @@
     </div>
   </div>
 
-  <!-- NAVIGATION (IM SPIELMODUS) -->
+  <!-- NAVIGATION -->
   <nav id="mainNav" style="display: none;">
     <button class="active" onclick="showTab('mainOverviewTab', this)">🏠 Hauptseite & Vitalwerte</button>
     <button onclick="showTab('actionsTab', this)">⚡ Aktionen & Kampf</button>
@@ -684,6 +679,13 @@
           <select id="createSubClass">
           </select>
         </div>
+      </div>
+
+      <!-- Feste Attribut-Wahl direkt bei Erstellung -->
+      <div id="createCombatStatContainer" style="display:none; margin-top:0.4rem;">
+        <label id="createCombatStatLabel" style="color:var(--gold-light);">Kampf-Attribut für Kampfwert festlegen:</label>
+        <select id="createCombatStatChoice">
+        </select>
       </div>
 
       <button class="btn btn-gold" style="width: 100%; padding: 0.9rem; margin-top: 1rem; font-size: 1rem;" onclick="finishCreation()">
@@ -756,7 +758,7 @@
             <div class="stat-display-grid">
               <div class="stat-pill">
                 <div class="num" id="combatRateDisplay">65%</div>
-                <div class="lbl">Kampfwert (W100)</div>
+                <div class="lbl" id="combatRateLabel">Kampfwert (W100)</div>
               </div>
               <div class="stat-pill">
                 <div class="num" id="armorDisplay">0</div>
@@ -890,7 +892,7 @@
         </div>
       </div>
 
-      <!-- TAB 5: AUSRÜSTUNG (Ausrüstung.pdf) -->
+      <!-- TAB 5: AUSRÜSTUNG (Ausrüstung.pdf)[cite: 3] -->
       <div id="equipTab" class="tab-content">
         <div class="card" style="margin-bottom:1.5rem;">
           <h2>Rüstungsschutz</h2>
@@ -975,7 +977,7 @@
         </div>
       </div>
 
-      <!-- TAB 6: RUCKSACK & MÜNZEN (Inventar.pdf) -->
+      <!-- TAB 6: RUCKSACK & MÜNZEN (Inventar.pdf)[cite: 1] -->
       <div id="invTab" class="tab-content">
         <div class="card backpack-frame">
           <h2>Geldbeutel</h2>
@@ -1056,7 +1058,7 @@
         </div>
       </div>
 
-      <!-- TAB 8: NOTIZEN & RP (Charakterbeschreibung.pdf) -->
+      <!-- TAB 8: NOTIZEN & RP (Charakterbeschreibung.pdf)[cite: 2] -->
       <div id="notesTab" class="tab-content">
         <div class="grid-2">
           <div class="card">
@@ -1149,6 +1151,7 @@
       avatar: '',
       category: 'nahkampf',
       subclass: 'krieger',
+      combatStatChoice: '',
       level: 1,
       availableTP: 0,
       extraSkillPoints: 0,
@@ -1264,6 +1267,31 @@
         el.innerText = opt.name;
         select.appendChild(el);
       });
+
+      // Erstellungs-Attributswahl für Praktiker & Geist aktualisieren
+      const createStatContainer = document.getElementById('createCombatStatContainer');
+      const createStatSelect = document.getElementById('createCombatStatChoice');
+      const createStatLabel = document.getElementById('createCombatStatLabel');
+
+      if (cat === 'nahkampf') {
+        createStatContainer.style.display = 'none';
+      } else if (cat === 'praktiker') {
+        createStatContainer.style.display = 'block';
+        createStatLabel.innerText = 'Kampf-Attribut wählen (Praktiker: Handeln oder Wissen):';
+        createStatSelect.innerHTML = `
+          <option value="handeln">Handeln</option>
+          <option value="wissen">Wissen</option>
+        `;
+        if (char.combatStatChoice) createStatSelect.value = char.combatStatChoice;
+      } else if (cat === 'geist') {
+        createStatContainer.style.display = 'block';
+        createStatLabel.innerText = 'Kampf-Attribut wählen (Geist: Wissen oder Soziales):';
+        createStatSelect.innerHTML = `
+          <option value="wissen">Wissen</option>
+          <option value="soziales">Soziales</option>
+        `;
+        if (char.combatStatChoice) createStatSelect.value = char.combatStatChoice;
+      }
     }
 
     function finishCreation() {
@@ -1276,6 +1304,14 @@
       char.customClass = document.getElementById('createCustomClass').value.trim();
       char.category = document.getElementById('createCategory').value;
       char.subclass = document.getElementById('createSubClass').value;
+      
+      // Feste Auswahl abspeichern
+      if (char.category === 'praktiker' || char.category === 'geist') {
+        char.combatStatChoice = document.getElementById('createCombatStatChoice').value;
+      } else {
+        char.combatStatChoice = 'handeln';
+      }
+
       char.level = 1;
       char.availableTP = (char.subclass === 'gelehrter') ? 1 : 0;
       char.extraSkillPoints = 0;
@@ -1313,6 +1349,9 @@
         document.getElementById('createCategory').value = char.category || 'nahkampf';
         updateCreationSubclasses();
         if (char.subclass) document.getElementById('createSubClass').value = char.subclass;
+        if (char.combatStatChoice && document.getElementById('createCombatStatChoice')) {
+          document.getElementById('createCombatStatChoice').value = char.combatStatChoice;
+        }
       } else {
         document.getElementById('creationScreen').style.display = 'none';
         document.getElementById('gameplaySection').style.display = 'block';
@@ -1471,7 +1510,7 @@
     function updateCalculations() {
       if (!char.created) return;
 
-      // 1. Max LP (inklusive passiver Talente)
+      // 1. Max LP
       let maxLP = 100 + ((char.level - 1) * 10);
       if (char.subclass === 'krieger') maxLP += 20;
       if (char.subclass === 'gelehrter' || char.subclass === 'kuenstler') maxLP -= 10;
@@ -1495,22 +1534,29 @@
 
       let bonus = 30;
       let usedBase = baseH;
+      let usedAttrName = 'Handeln';
 
       if (char.category === 'nahkampf') {
         bonus = 35;
         usedBase = baseH;
+        usedAttrName = 'Handeln';
       } else if (char.category === 'praktiker') {
         bonus = 30;
-        usedBase = Math.max(baseH, baseW);
+        if (!char.combatStatChoice) char.combatStatChoice = 'handeln';
+        usedBase = (char.combatStatChoice === 'wissen') ? baseW : baseH;
+        usedAttrName = (char.combatStatChoice === 'wissen') ? 'Wissen' : 'Handeln';
       } else if (char.category === 'geist') {
         bonus = 30;
-        usedBase = Math.max(baseW, baseS);
+        if (!char.combatStatChoice) char.combatStatChoice = 'wissen';
+        usedBase = (char.combatStatChoice === 'soziales') ? baseS : baseW;
+        usedAttrName = (char.combatStatChoice === 'soziales') ? 'Soziales' : 'Wissen';
       }
 
       let combatRate = usedBase + bonus + (5 * char.level);
       document.getElementById('combatRateDisplay').innerText = combatRate + "%";
+      document.getElementById('combatRateLabel').innerText = `Kampfwert (${usedAttrName})`;
 
-      // 3. Rüstung & GBP (inklusive passiver Talente)
+      // 3. Rüstung & GBP
       const passiveArmor = calculatePassiveBonus('armor');
       const manualArmor = parseInt(document.getElementById('manualArmorBonus').value) || 0;
       char.manualArmor = manualArmor;
@@ -1583,7 +1629,7 @@
       saveData();
     }
 
-    // ==================== STUFENAUFSTIEG (MEILENSTEIN) ====================
+    // ==================== STUFENAUFSTIEG ====================
     function levelUpHero() {
       if (!confirm(`Glückwunsch zum Meilenstein! Möchtest du Stufe ${char.level + 1} erreichen? (+10 LP, +1 Talentpunkt, +3 Fähigkeitenpunkte)`)) return;
 
@@ -1955,7 +2001,6 @@
       });
     }
 
-    // ==================== MODAL STEUERUNG FÜR FESTE WERTE ====================
     function openTalentModal() {
       const rastCount = char.talents.filter(t => t.category === 'rast').length;
       const kampfCount = char.talents.filter(t => t.category === 'kampf').length;
@@ -2214,11 +2259,11 @@
         const el = document.getElementById(id);
         if (el) data.fields[id] = el.value;
       });
-      localStorage.setItem('zamonien_v15_save', JSON.stringify(data));
+      localStorage.setItem('zamonien_v16_save', JSON.stringify(data));
     }
 
     function loadData() {
-      const raw = localStorage.getItem('zamonien_v15_save');
+      const raw = localStorage.getItem('zamonien_v16_save');
       if (!raw) {
         applyCharacterState();
         return;
@@ -2252,7 +2297,7 @@
 
     function exportJSON() {
       saveData();
-      const raw = localStorage.getItem('zamonien_v15_save');
+      const raw = localStorage.getItem('zamonien_v16_save');
       const filename = `${char.name || 'Held'}_Zamonien.json`;
       const blob = new Blob([raw], { type: 'application/json' });
       const a = document.createElement('a');
@@ -2268,7 +2313,7 @@
       reader.onload = function(e) {
         try {
           const parsed = JSON.parse(e.target.result);
-          localStorage.setItem('zamonien_v15_save', JSON.stringify(parsed));
+          localStorage.setItem('zamonien_v16_save', JSON.stringify(parsed));
           loadData();
           alert('Charakter erfolgreich übertragen!');
         } catch(err) {
@@ -2280,7 +2325,7 @@
 
     function resetAll() {
       if (confirm('Möchtest du diesen Charakter wirklich löschen und neu beginnen?')) {
-        localStorage.removeItem('zamonien_v15_save');
+        localStorage.removeItem('zamonien_v16_save');
         location.reload();
       }
     }
